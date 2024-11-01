@@ -29,8 +29,8 @@ while running:
 
     if location != target:
         angle = math.atan2(abs(location[1]-target[1]),abs(location[0]-target[0]))
-        dx = int(math.cos(angle)*speed)
-        dy = int(math.sin(angle)*speed)
+        dx = math.cos(angle)*speed
+        dy = math.sin(angle)*speed
 
         if abs(location[0] - target[0]) < speed and abs(location[1] - target[1]) < speed:
             location[0] = target[0]
