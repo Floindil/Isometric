@@ -15,19 +15,38 @@ def draw_rect_isometric(surface: pygame.Surface, rect: pygame.Rect):
     pygame.draw.lines(surface, "red", True, points)
 
 class Box:
-    def __init__(self, x: int, y: int, width: int, lenght: int, height: int) -> None:
-        self.rect = pygame.Rect(x, y, width, lenght)
-        self.height = height
+    def __init__(self, x: int, y: int, z: int, width: int, lenght: int, height: int) -> None:
+        self.__rect = pygame.Rect(x, y, width, lenght)
+        self.__z = z
+        self.__height = height
+
+    @property
+    def x(self) -> int:
+        return self.__rect.x
+    
+    @property
+    def y(self) -> int:
+        return self.__rect.y
+    
+    @property
+    def z(self) -> int:
+        return self.__z
 
     def draw(self, surface):
-        lower_rect = calc_isometric_rect_points(self.rect)
-        upper_rect = calc_isometric_rect_points(self.rect, self.height*2/squash_factor)
+        lower_rect = calc_isometric_rect_points(self.__rect)
+        upper_rect = calc_isometric_rect_points(self.__rect, self.__height*2/squash_factor)
         pygame.draw.lines(surface, "red", True, lower_rect)
         pygame.draw.lines(surface, "red", True, upper_rect)
         pygame.draw.line(surface, "red", lower_rect[0], upper_rect[0])
         pygame.draw.line(surface, "red", lower_rect[1], upper_rect[1])
         pygame.draw.line(surface, "red", lower_rect[2], upper_rect[2])
         pygame.draw.line(surface, "red", lower_rect[3], upper_rect[3])
+
+    def collision(self, point: tuple[int, int, int]) -> bool:
+        if point[2] > self.__height + self.z or point[2] < self.z:
+            return False
+        else:
+            return self.__rect.collidepoint(point[0], point[1])
 
 pygame.init()
 
@@ -40,17 +59,17 @@ surface.fill("light grey")
 
 rect = pygame.Rect(100,100,100,100)
 
-box1 = Box(300, 300, 100, 100, 50)
-box2 = Box(350, 325, 100, 100, 50)
-box3 = Box(350, 275, 100, 100, 50)
-box4 = Box(400, 300, 100, 100, 50)
+box1 = Box(300, 300, 0, 100, 100, 50)
+box2 = Box(350, 325, 0, 100, 100, 50)
+box3 = Box(350, 275, 0, 100, 100, 50)
+box4 = Box(400, 300, 0, 100, 100, 50)
+boxes = [box1, box2, box3, box4]
 
 clock = pygame.time.Clock()
 
 running = True
 
-location = [50, 50]
-target = [50, 50]
+location = [50, 50, 0]
 speed = 3
 
 while running:
@@ -59,32 +78,35 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            target = pygame.mouse.get_pos()
+        pressed_keys = pygame.key.get_pressed()
 
-    if location != target:
-        angle = math.atan2(abs(location[1]-target[1]),abs(location[0]-target[0]))
-        dx = math.cos(angle)*speed
-        dy = math.sin(angle)*speed
+    if pressed_keys[pygame.K_w]:
+        dy = -speed
+    elif pressed_keys[pygame.K_s]:
+        dy = speed
+    else:
+        dy = 0
+    
+    if pressed_keys[pygame.K_d]:
+        dx = speed
+    elif pressed_keys[pygame.K_a]:
+        dx = -speed
+    else:
+        dx = 0
 
-        if abs(location[0] - target[0]) < speed and abs(location[1] - target[1]) < speed:
-            location[0] = target[0]
-            location[1] = target[1]
-        else:
-            if location[0] > target[0]:
-                location[0] -= dx
-            else:
-                location[0] += dx
+    temp_location = [location[0]+dx, location[1]+dy, location[2]]
 
-            if location[1] > target[1]:
-                location[1] -= dy
-            else:
-                location[1] += dy
+    collision = False
+    for box in boxes:
+        if box.collision(temp_location):
+            collision = True
+            
+    if not collision:
+        location = temp_location
 
     screen.fill("light grey")
 
     pygame.draw.circle(screen,(255, 0, 0), (location[0], location[1]), 10)
-    pygame.draw.line(screen, pygame.Color("green"), location, target)
     draw_rect_isometric(screen, rect)
     box1.draw(screen)
     box2.draw(screen)
