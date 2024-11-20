@@ -1,6 +1,7 @@
 import pygame
 from core.Renderer import Renderer
 from core.Eventhandler import Eventhandler
+from assets.animations.Animation import Animation
 
 class Gameloop:
     def __init__(self) -> None:
@@ -8,6 +9,8 @@ class Gameloop:
         self.__running = True
         self.__renderer = Renderer()
         self.__eventhandler = Eventhandler()
+        self.attack = Animation("character", "attack")
+        self.attack.start()
 
     @property
     def running(self) -> bool:
@@ -16,6 +19,9 @@ class Gameloop:
     def run(self):
 
         self.__running = self.__eventhandler.run()
+
+        self.attack.update()
+        self.__renderer.set_images([self.attack.get_frame("down")], [[0,0]])
 
         self.__renderer.render()
         pygame.display.flip()
