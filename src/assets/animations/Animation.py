@@ -4,49 +4,105 @@ import os
 from core.Configuration import Animation as A
 
 class Animation:
-    
+    """
+    A class to handle animations using Pygame.
+
+    Attributes:
+        __id (str): A unique identifier for the animation.
+        __len (int): The number of frames in the animation.
+        __count (int): The current frame counter.
+        __play (bool): A flag indicating whether the animation is playing.
+    """
+
     def __init__(self, folder: str, animation: str) -> None:
-        self.len = 0
-        self.frames = self.load_frames(folder, animation)
-        self.count = 0
-        self.play = False
+        """
+        Initializes the Animation object.
 
-    def update(self):
-        if self.play:
-            if self.count <= self.len * A.FRAMERATE:
-                self.count += 1
+        Args:
+            folder (str): The folder where the animation frames are stored.
+            animation (str): The name of the animation.
+        """
+        self.__id = f"{folder}_{animation}"
+        self.__len = 0
+        self.__count = 0
+        self.__play = False
+
+    @property
+    def index(self) -> int:
+        """
+        Gets the current frame index based on the frame rate.
+
+        Returns:
+            int: The current frame index.
+        """
+        return self.__count // A.FRAMERATE
+    
+    @property
+    def id(self) -> str:
+        """
+        Gets the unique identifier for the animation.
+
+        Returns:
+            str: The unique identifier for the animation.
+        """
+        return self.__id
+    
+    @property
+    def type(self) -> str:
+        return self.__id.split("_")[-1]
+
+    def update(self) -> None:
+        """
+        Updates the animation frame counter if the animation is playing.
+        """
+        if self.__play:
+            if self.__count <= self.__len * A.FRAMERATE:
+                self.__count += 1
             else:
-                self.count = 0
+                self.__count = 0
 
-    def start(self):
-        self.play = True
+    def start(self) -> None:
+        """
+        Starts playing the animation.
+        """
+        self.__play = True
 
-    def stop(self):
-        self.play = False
-        self.count = 0
+    def stop(self) -> None:
+        """
+        Stops playing the animation and resets the frame counter.
+        """
+        self.__play = False
+        self.__count = 0
 
-    def get_frame(self, direction) -> pygame.Surface:
-        i = self.count // A.FRAMERATE
-        frame = self.frames.get(direction)[i]
-        return frame
+    def load_frames(self) -> dict:
+        """
+        Loads animation frames from the specified directory.
 
-    def load_frames(self, folder: str, animation: str) -> dict:
+        Returns:
+            dict: A dictionary containing the loaded frames organized by direction.
+        """
+        id_split = self.__id.split("_")
+        folder = id_split[0]
+        animation = id_split[1]
+
         frames = {}
-        path = f"src/assets/animations/{folder}/{animation}/"
+        path = f"{A.PATH}{folder}/{animation}/"
+
         for frame in os.listdir(path):
             surface = pygame.image.load(f"{path}{frame}")
-            name_parts = frame.replace(".png", "").split("_")
-            direction = name_parts[0]
-            index = int(name_parts[-1])
+
+            frame_id = frame.replace(A.SUFFIX, "")
+            frame_id_split = frame_id.split("_")
+            direction = frame_id_split[0]
+            index = int(frame_id_split[-1])
+
             d = frames.get(direction)
             if not d:
                 frames.update({direction: [surface]})
             else:
                 frames[direction].insert(index, surface)
 
-            if index > self.len:
-                self.len = index
+            if index > self.__len:
+                self.__len = index
         
         return frames
-            
-
