@@ -10,6 +10,8 @@ class Player:
     DOWN = pygame.K_s
     LEFT = pygame.K_a
     RIGHT = pygame.K_d
+    ATTACK = pygame.K_o
+    ROLL = pygame.K_p
 
 class Image:
     TYPE = "image"

@@ -12,15 +12,23 @@ class TestScene(Scene):
     def start(self) -> None:
         super().start()
 
-        player_attack = Animation("character", EntityStates.WALKING)
+        player_walk = Animation("character", EntityStates.WALKING)
         player_idle = Animation("character", EntityStates.IDLE)
+        player_roll = Animation("character", EntityStates.ROLLING)
+        player_attack = Animation("character", EntityStates.ATTACKING)
 
         self.assetManager.register_asset(player_attack.id, player_attack.load_frames())
         self.assetManager.register_asset(player_idle.id, player_idle.load_frames())
+        self.assetManager.register_asset(player_roll.id, player_roll.load_frames())
+        self.assetManager.register_asset(player_walk.id, player_walk.load_frames())
         
         player = Entity("player")
-        player.link_animation(EntityStates.WALKING, player_attack)
+        player.link_animation(EntityStates.ATTACKING, player_attack)
         player.link_animation(EntityStates.IDLE, player_idle)
+        player.link_animation(EntityStates.WALKING, player_walk)
+        player.link_animation(EntityStates.ROLLING, player_roll)
+
+        player.set_state(EntityStates.IDLE)
 
         self.__playerManager = PlayerManager(player)
 

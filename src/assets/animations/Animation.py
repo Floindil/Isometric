@@ -25,7 +25,12 @@ class Animation:
         self.__id = f"{folder}_{animation}"
         self.__len = 0
         self.__count = 0
+        self.__loops = 0
         self.__play = False
+
+    @property
+    def loops(self) -> int:
+        return self.__loops
 
     @property
     def index(self) -> int:
@@ -60,6 +65,7 @@ class Animation:
                 self.__count += 1
             else:
                 self.__count = 0
+                self.__loops +=1
 
     def start(self) -> None:
         """
@@ -73,6 +79,7 @@ class Animation:
         """
         self.__play = False
         self.__count = 0
+        self.__loops = 0
 
     def load_frames(self) -> dict:
         """

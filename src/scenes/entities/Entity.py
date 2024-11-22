@@ -14,7 +14,7 @@ class Entity:
         self.__current_animation = None
         self._collision_boxes = []
         self._direction = Directions.S
-        self._state = EntityStates.IDLE
+        self._state = None
         self.__animated = False
 
     @property
@@ -41,12 +41,19 @@ class Entity:
     def animation_context(self) -> list[str, str, int]:
         if self.__current_animation:
             return self.__current_animation.id, self._direction, self.__current_animation.index
+        
+    @property
+    def loops(self):
+        return self.__current_animation.loops
     
     def set_state(self, state: str) -> None:
-        self._state = state
-        animation: Animation = self._animations.get(state)
-        if animation:
-            animation.start()
+        if self._state != state:
+            self._state = state
+            animation: Animation = self._animations.get(state)
+            if animation:
+                if self.__current_animation:
+                    self.__current_animation.stop()
+                animation.start()
     
     def set_location(self, coordinates: list[int, int, int]) -> None:
         self._location = coordinates
