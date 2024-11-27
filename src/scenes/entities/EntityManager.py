@@ -1,3 +1,4 @@
+from core.Configuration import EntityStates
 from scenes.entities.Entity import Entity
 
 class EntityManager:
@@ -19,5 +20,8 @@ class EntityManager:
         self.__entities.pop(id)
 
     def update(self) -> None:
-        for entity in self.entities.values():
+        active_entities: list[Entity] = self.entities.values()
+        for entity in active_entities:
             entity.update()
+            if entity.state == EntityStates.DEAD:
+                self.unregister_entity(entity.id)

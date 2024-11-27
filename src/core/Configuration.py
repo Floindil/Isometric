@@ -23,6 +23,8 @@ class Animation:
     SUFFIX = ".png"
     PATH = "src/assets/animations/"
     FRAMERATE = 4
+    SHEETSIZE = [6, 4] # Frames per side
+    FRAMESIZE = 256
 
 class Sound:
     TYPE = "sound"
@@ -30,19 +32,20 @@ class Sound:
     PATH = "src/assets/sounds/"
 
 class Directions:
-    S = "down"
-    SW = "downLeft"
-    SE = "downRight"
-    N = "up"
-    NW = "upLeft"
-    NE = "upRight"
-    W = "left"
-    E = "right"
+    S = "180"
+    SW = "225"
+    SE = "135"
+    N = "000"
+    NW = "315"
+    NE = "045"
+    W = "270"
+    E = "090"
 
 class EntityStates:
     WALKING = "walk"
     ATTACKING = "attack"
-    DEAD = "death"
+    DYING = "dying"
+    DEAD = "dead"
     IDLE = "idle"
     ROLLING = "roll"
     

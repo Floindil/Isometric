@@ -18,7 +18,7 @@ class TestScene(Scene):
         player_attack = Animation("character", EntityStates.ATTACKING)
 
         self.assetManager.register_asset(player_attack.id, player_attack.load_frames())
-        self.assetManager.register_asset(player_idle.id, player_idle.load_frames())
+        self.assetManager.register_asset(player_idle.id, player_idle.load_frames(frames_x=4))
         self.assetManager.register_asset(player_roll.id, player_roll.load_frames())
         self.assetManager.register_asset(player_walk.id, player_walk.load_frames())
         
