@@ -56,15 +56,12 @@ class PlayerManager:
     def process_input(self) -> list[int, int, int]:
 
         keys = pygame.key.get_pressed()
-        if self.player._state not in (
-            EntityStates.ATTACKING,
-            EntityStates.ROLLING
-        ):
-            if self.update_key_watch(Player.ATTACK, keys[Player.ATTACK]):
-                self.player.set_state(EntityStates.ATTACKING)
 
-            if self.update_key_watch(Player.ROLL, keys[Player.ROLL]):
-                self.player.set_state(EntityStates.ROLLING)
+        if self.update_key_watch(Player.ATTACK, keys[Player.ATTACK]):
+            self.player.set_state(EntityStates.ATTACKING)
+
+        if self.update_key_watch(Player.ROLL, keys[Player.ROLL]):
+            self.player.set_state(EntityStates.ROLLING)
 
         movement = [0, 0, 0]
 
