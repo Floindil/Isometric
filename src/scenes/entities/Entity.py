@@ -34,10 +34,6 @@ class Entity:
         return self.__id
 
     @property
-    def state(self) -> str:
-        return self._state
-
-    @property
     def location(self) -> list[int, int, int]:
         return self._location
     
@@ -67,6 +63,7 @@ class Entity:
         self.__current_animation.start()
 
     def link_animation(self, state: str, animation: Animation) -> None:
+        self.__animated = True
         self._animations.update({state: animation})
 
     def update(self):

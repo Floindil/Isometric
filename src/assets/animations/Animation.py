@@ -81,7 +81,7 @@ class Animation:
         self.__count = 0
         self.__loops = 0
 
-    def load_frames(self, frames_x: int = A.SHEETSIZE[0], frames_y: int =  A.SHEETSIZE[1]) -> dict:
+    def load_frames(self) -> dict:
         """
         Loads animation frames from the specified directory.
 
@@ -95,29 +95,21 @@ class Animation:
         frames = {}
         path = f"{A.PATH}{folder}/{animation}/"
 
-        for direction in os.listdir(path):
-            surface = pygame.image.load(f"{path}{direction}")
-            frame_size = [surface.get_width() / frames_x, surface.get_height() / frames_y]
+        for frame in os.listdir(path):
+            surface = pygame.image.load(f"{path}{frame}")
 
-            sheet_name = direction.replace(A.SUFFIX, "")
-            direction = sheet_name.split("_")[-1]
-            index = 0
+            frame_id = frame.replace(A.SUFFIX, "")
+            frame_id_split = frame_id.split("_")
+            direction = frame_id_split[0]
+            index = int(frame_id_split[-1])
 
-            for frame_y in range(frames_y):
-                for frame_x in range(frames_x):
-                    image = pygame.Surface(frame_size, pygame.SRCALPHA)
-                    location = [-frame_x*frame_size[0], -frame_y*frame_size[1]]
-                    image.blit(surface, location)
+            d = frames.get(direction)
+            if not d:
+                frames.update({direction: [surface]})
+            else:
+                frames[direction].insert(index, surface)
 
-                    d = frames.get(direction)
-                    if not d:
-                        frames.update({direction: [image]})
-                    else:
-                        frames[direction].insert(index, image)
-
-                    if index > self.__len:
-                        self.__len = index
-
-                    index += 1
+            if index > self.__len:
+                self.__len = index
         
         return frames
